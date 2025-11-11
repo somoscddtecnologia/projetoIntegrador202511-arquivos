@@ -1,0 +1,63 @@
+name: Deploy para VPS com build local
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Instalar PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Instalar dependências
+        run: pnpm install
+
+      # - name: Build do projeto
+      #   run: pnpm run build
+
+      - name: Criar chave SSH
+        run: |
+          echo "${{ secrets.VPS_KEY }}" > private_key
+          chmod 600 private_key
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='private_key' \
+            . \
+            deploy@${{ secrets.VPS_HOST }}:/var/www/rpv-arquivos/html
+
+      # - name: Enviar arquivos via rsync
+      #   run: |
+      #     rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+      #       --exclude='.git' \
+      #       --exclude='node_modules' \
+      #       . \
+      #       deploy@${{ secrets.VPS_HOST }}:/var/www/rpv-arquivos/html
+
+      # - name: Rodar PM2 na VPS
+      #   run: |
+      #     ssh -i private_key -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} << 'EOF'
+      #       export NVM_DIR="$HOME/.nvm"
+      #       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      #       nvm use 22
+      #       cd /var/www/rpv-arquivos/html
+      #       pnpm install --prod
+      #       pm2 startOrReload ecosystem.config.js --only rpv-arquivos
+      #     EOF

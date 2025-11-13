@@ -38,26 +38,15 @@ jobs:
         run: |
           rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
             --exclude='.git' \
-            --exclude='node_modules' \
             --exclude='private_key' \
             . \
             deploy@${{ secrets.VPS_HOST }}:/var/www/rpv-arquivos/html
 
-      # - name: Enviar arquivos via rsync
-      #   run: |
-      #     rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
-      #       --exclude='.git' \
-      #       --exclude='node_modules' \
-      #       . \
-      #       deploy@${{ secrets.VPS_HOST }}:/var/www/rpv-arquivos/html
-
-      # - name: Rodar PM2 na VPS
-      #   run: |
-      #     ssh -i private_key -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} << 'EOF'
-      #       export NVM_DIR="$HOME/.nvm"
-      #       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-      #       nvm use 22
-      #       cd /var/www/rpv-arquivos/html
-      #       pnpm install --prod
-      #       pm2 startOrReload ecosystem.config.js --only rpv-arquivos
-      #     EOF
+      - name: Reiniciar aplicação no servidor (PM2)
+        if: always()
+        run: |
+          ssh -i private_key -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} ' \
+            cd /var/www/rpv-arquivos/html && \
+            pnpm install --prod && \
+            pm2 reload ecosystem.config.js \
+          '

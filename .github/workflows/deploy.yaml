@@ -48,6 +48,16 @@ jobs:
           ssh -i private_key -o StrictHostKeyChecking=no deploy@${{ secrets.VPS_HOST }} '
             echo "--- CONECTADO AO SERVIDOR ---"
             
+            # --- CORREÇÃO DE AMBIENTE ---
+            # Carrega o NVM (Node Version Manager) no shell
+            # Isso é necessário porque o pnpm e o pm2 foram instalados com ele.
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            # Opcional: Se você usa uma versão específica do node, ative-a:
+            # nvm use 22 
+            # ---------------------------
+
             echo "Navegando para o diretório da aplicação..."
             cd /var/www/rpv-conta/html
             

@@ -59,7 +59,7 @@ jobs:
             # ---------------------------
 
             echo "Navegando para o diretório da aplicação..."
-            cd /var/www/rpv-conta/html
+            cd /var/www/rpv-arquivos/html
             
             echo "Instalando dependências de produção (pnpm install --prod)..."
             pnpm install --prod

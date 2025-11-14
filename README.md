@@ -13,3 +13,15 @@ Segurança (Ocultação de URL): O resultado do "Proxy Reverso" é que o usuári
 Validação na Entrada: Antes de aceitar qualquer upload, a API verifica rigorosamente se o arquivo é de um tipo permitido (PDF, JPG, PNG) e se está abaixo do limite de tamanho (5MB).
 
 Gerenciamento de Banco: A estrutura do banco de dados (como a criação da tabela arquivo) é gerenciada de forma profissional usando migrations do Knex, o que permite controle de versão.
+
+# Alunos
+
+* Higor Antônio
+* Davydson Maciel
+* Hugo Garcia
+* Lucas Araújo
+* Gelson Teixeira
+* Fabricio Stievano
+* Eduarda Veiga
+* Larissa Bulho
+* Maria Julia Castro 
